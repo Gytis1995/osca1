@@ -15,19 +15,13 @@ int main(){
 	char n[arraySize];
 	int i;
 	int r2;
-	 FILE *physical_memory = fopen("data/physical_memory.txt","w");
-	 
 	for(i=0;i<=r;i++)
 	{
+		n[i] = generateRandomNumber(32,126);
 int rand = 	generateRandomNumber(32,126);
- char n = rand;
-		fprintf(physical_memory, "%d random char: %c\n",i,n);
+char  n[] = int rand;
+		printf("random char: %d\n",rand);
 	}  
-
-//int loop;
-//for(loop = 0; loop<r; loop++){
-	//printf("%d, ", n[loop]);
-//}
 
 
 	return 0;
