@@ -8,41 +8,55 @@ int arraySize = 65536;
 int generateRandomNumber(int start, int end);
 
 int main(){
+
+	//restart the random numbers
 	 srand (time(NULL));
-	 
-	int r = generateRandomNumber(start, end);
+
+  //int r = generateRandomNumber(start, end);
+  int r = generateRandomNumber(start, end);
 	printf("Random number generated is : %d\n", r);
 	
-	char n[arraySize];
+	char *n = malloc(arraySize);
 	int i;
-	int r2;
-	
-		//write file
-		FILE *physical_memory = fopen("data/physical_memory.txt","w");
-	  FILE * fPointer;
-	  //read from file
-	  fPointer = fopen("data/physical_memory.txt","r");  
+
+	//indicate empty space in array
+	for (int i = 0; i < arraySize; i++)
+		{
+			n[i] = '0';
+		}
 
 	//generate random characters
-	for(i=0;i<=r;i++)
+	for(i=0;i<r;i++)
 	{
-		int rand = 	generateRandomNumber(32,126);
-		char n = rand;
+	 n[i]  = generateRandomNumber(32,126);
+	}
+	
+	//printf("%s\n", n);
 
-	//print to the file
-		fprintf(physical_memory, "%d random char: %c\n",i,n);
+	//write to file
+	FILE *physical_memory = fopen("data/physical_memory.txt","w");
+	for(int i = 0; i < arraySize; i++)
+	{
+		fprintf(physical_memory, "| 0x%d |      | %c |\n",i,n[i]);
 	}
 
-	//read from file	
+	//read from file
+	FILE * fPointer;   
+	fPointer = fopen("data/physical_memory.txt","r");  
 	char singleLine[100];
 	fPointer = fopen("data/physical_memory.txt","r");  
 	while(!feof(fPointer)){
 	fgets(singleLine, 100, fPointer);
 	puts(singleLine);
-	}  
-
+	}
 	fclose(fPointer);
-
+	 
+	//get the element from the array by position
+		 int arrayPosition;  
+  	 printf("\n enter the position of the number in the array you want : ");
+     scanf("%d", &arrayPosition);
+     printf("\n the character at position %d is : %c\n", arrayPosition, n[arrayPosition]);	 
+	
 	return 0;
 }
 
