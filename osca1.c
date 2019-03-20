@@ -1,4 +1,4 @@
-#include <stdio.h>
+ #include <stdio.h>
 #include <stdlib.h>
 
 int start = 2048;
@@ -15,26 +15,38 @@ int main(){
 	char n[arraySize];
 	int i;
 	int r2;
-	 FILE *physical_memory = fopen("data/physical_memory.txt","w");
-	 
+	
+		//write file
+		FILE *physical_memory = fopen("data/physical_memory.txt","w");
+	  FILE * fPointer;
+	  //read from file
+	  fPointer = fopen("data/physical_memory.txt","r");  
+
+	//generate random characters
 	for(i=0;i<=r;i++)
 	{
-int rand = 	generateRandomNumber(32,126);
- char n = rand;
+		int rand = 	generateRandomNumber(32,126);
+		char n = rand;
+
+	//print to the file
 		fprintf(physical_memory, "%d random char: %c\n",i,n);
+	}
+
+	//read from file	
+	char singleLine[100];
+	fPointer = fopen("data/physical_memory.txt","r");  
+	while(!feof(fPointer)){
+	fgets(singleLine, 100, fPointer);
+	puts(singleLine);
 	}  
 
-//int loop;
-//for(loop = 0; loop<r; loop++){
-	//printf("%d, ", n[loop]);
-//}
-
+	fclose(fPointer);
 
 	return 0;
-
 }
 
-int generateRandomNumber(int start, int end){
+	//generate random numbers
+	int generateRandomNumber(int start, int end){
 	int mid = end- start;
 	int	randomNumber;
 
