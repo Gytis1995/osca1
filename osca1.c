@@ -1,14 +1,15 @@
- #include <stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 int start = 2048;
 int end = 20480;
 int arraySize = 65536;
-
 int generateRandomNumber(int start, int end);
 
 int main(){
-
+	 srand (time(NULL));
+	 
 	int r = generateRandomNumber(start, end);
 	printf("Random number generated is : %d\n", r);
 	
