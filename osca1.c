@@ -35,16 +35,15 @@ int main(){
 
 	//write to file
 	FILE *physical_memory = fopen("data/physical_memory.txt","w");
-	for(int i = 0; i < arraySize; i++)
+	for(int i = 512; i < arraySize; i++)
 	{
-		fprintf(physical_memory, "| 0x%d |      | %c |\n",i,n[i]);
+		fprintf(physical_memory, "| 0x%x | %d | %c |\n",i,i/256,n[i]);
 	}
 
 	//read from file
 	FILE * fPointer;   
 	fPointer = fopen("data/physical_memory.txt","r");  
 	char singleLine[100];
-	fPointer = fopen("data/physical_memory.txt","r");  
 	while(!feof(fPointer)){
 	fgets(singleLine, 100, fPointer);
 	puts(singleLine);
