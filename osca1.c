@@ -14,7 +14,7 @@ int main(){
 
   //int r = generateRandomNumber(start, end);
   int r = generateRandomNumber(start, end);
-	printf("Random number generated is : %d\n", r);
+	
 	
 	char *n = malloc(arraySize);
 	int i;
@@ -25,19 +25,26 @@ int main(){
 			n[i] = '0';
 		}
 
+	//generate random location to start populating array
+  int randomLocation = generateRandomNumber(512,((arraySize - 1)-r));
+  //int count = 0;
+
 	//generate random characters
-	for(i=0;i<r;i++)
+	for(int i=randomLocation; i < (randomLocation+r); ++i)
 	{
-	 n[i]  = generateRandomNumber(32,126);
+	 n[i]  =  generateRandomNumber(32,126);
 	}
+
 	
 	//printf("%s\n", n);
+
+	
 
 	//write to file
 	FILE *physical_memory = fopen("data/physical_memory.txt","w");
 	for(int i = 512; i < arraySize; i++)
 	{
-		fprintf(physical_memory, "| 0x%x | %d | %c |\n",i,i/256,n[i]);
+		fprintf(physical_memory, "| 0x%d | %d | %c |\n",i,i/256,n[i]);
 	}
 
 	//read from file
@@ -49,12 +56,15 @@ int main(){
 	puts(singleLine);
 	}
 	fclose(fPointer);
-	 
+	
+	printf("Random number generated is : %d\n", r);
+	
+		 
 	//get the element from the array by position
-		 int arrayPosition;  
-  	 printf("\n enter the position of the number in the array you want : ");
-     scanf("%d", &arrayPosition);
-     printf("\n the character at position %d is : %c\n", arrayPosition, n[arrayPosition]);	 
+	//	 int arrayPosition;  
+  //	 printf("\n enter the position of the number in the array you want : ");
+  //   scanf("%d", &arrayPosition);
+  //   printf("\n the character at position %d is : %c\n", arrayPosition, n[arrayPosition]);	 
 	
 	return 0;
 }
