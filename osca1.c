@@ -7,17 +7,17 @@ int end = 20480;
 int arraySize = 65536;
 int generateRandomNumber(int start, int end);
 
+
 int main(){
 
 	//restart the random numbers
-	 srand (time(NULL));
+	srand (time(NULL));
 
-  //int r = generateRandomNumber(start, end);
-  int r = generateRandomNumber(start, end);
+  	int r = generateRandomNumber(start, end);
 	
 	
 	char *n = malloc(arraySize);
-	int i;
+	
 
 	//indicate empty space in array
 	for (int i = 0; i < arraySize; i++)
@@ -26,9 +26,8 @@ int main(){
 		}
 
 	//generate random location to start populating array
-  int randomLocation = generateRandomNumber(512,((arraySize - 1)-r));
-  //int count = 0;
-
+	int randomLocation = generateRandomNumber(512,((arraySize - 1)-r));
+ 
 	//generate random characters
 	for(int i=randomLocation; i < (randomLocation+r); ++i)
 	{
@@ -38,15 +37,16 @@ int main(){
 	
 	//printf("%s\n", n);
 
-	
 
 	//write to file
 	FILE *physical_memory = fopen("data/physical_memory.txt","w");
 	for(int i = 512; i < arraySize; i++)
 	{
-		fprintf(physical_memory, "| 0x%d | %d | %c |\n",i,i/256,n[i]);
+		fprintf(physical_memory, "| 0x%x | %d | %c |\n",i,i/256,n[i]);
 	}
-
+	fclose(physical_memory);
+	
+	
 	//read from file
 	FILE * fPointer;   
 	fPointer = fopen("data/physical_memory.txt","r");  
@@ -58,13 +58,57 @@ int main(){
 	fclose(fPointer);
 	
 	printf("Random number generated is : %d\n", r);
+
+
+	//fill in page table data
+	int frames = ((r+(randomLocation-1))/256) - (randomLocation/256);
+
+	for(int i = 0; i <= frames; ++i){
+		n[i] = i + (randomLocation/256);
+	}
+
+	
+	//write to page table
+	FILE *page_table = fopen("data/page_table.txt","w");
+	for(int i = 0; i <= frames; i++)
+	{
+		if(n[i]<0)
+		{
+			fprintf(page_table, "| 0x%x | %d |\n",i,256 + n[i]);
+		}
+		else{
+		fprintf(page_table, "| 0x%x | %d |\n",i,n[i]);
+		}
+	}
+	fclose(page_table);
+
 	
 		 
-	//get the element from the array by position
-	//	 int arrayPosition;  
-  //	 printf("\n enter the position of the number in the array you want : ");
-  //   scanf("%d", &arrayPosition);
-  //   printf("\n the character at position %d is : %c\n", arrayPosition, n[arrayPosition]);	 
+	//address translation
+		 int virtualAddress=0;
+	do
+	{
+	
+  	 printf("\nEnter virtual address : ");
+		 scanf("%x", &virtualAddress);
+
+	int pageNumber = virtualAddress/256;
+	int frameNumber = n[pageNumber];
+	if (frameNumber<0)
+ 	{
+		frameNumber = 256 + frameNumber;
+	}
+	int offset = virtualAddress - ((pageNumber*256)-1);
+	int physicalAddress = (frameNumber * 256) + offset;
+
+	printf("\nAddress : 0x%x",virtualAddress);
+	printf("\nPage no : %d",pageNumber);
+	printf("\nPage %d : frame %d", pageNumber, frameNumber);
+	printf("\nOffset : %d", offset);
+	printf("\nValue : %c",n[physicalAddress]);
+		
+	}
+	while(virtualAddress > 0);
 	
 	return 0;
 }
