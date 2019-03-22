@@ -13,41 +13,41 @@ int main(){
 	//restart the random numbers
 	srand (time(NULL));
 
-  	int r = generateRandomNumber(start, end);
+ 	int bytes = generateRandomNumber(start, end);
 	
-	
-	char *n = malloc(arraySize);
-	
+	char *physicalMemory = malloc(arraySize);
 
-	//indicate empty space in array
+	//indicating the empty spaces in the array
 	for (int i = 0; i < arraySize; i++)
 		{
-			n[i] = '0';
+			physicalMemory[i] = '~';
 		}
 
-	//generate random location to start populating array
-	int randomLocation = generateRandomNumber(512,((arraySize - 1)-r));
+	//generate random location to start populating the physical memory array
+	int randomLocation = generateRandomNumber(512,((arraySize - 1)-bytes));
  
-	//generate random characters
-	for(int i=randomLocation; i < (randomLocation+r); ++i)
+	//generate random values/characters that are going to be stored in the physical memory
+	for(int i=randomLocation; i < (randomLocation+bytes); ++i)
 	{
-	 n[i]  =  generateRandomNumber(32,126);
+	 physicalMemory[i]  =  generateRandomNumber(32,126);
 	}
 
-	
-	//printf("%s\n", n);
-
-
-	//write to file
+	//write the physical memory to a file
 	FILE *physical_memory = fopen("data/physical_memory.txt","w");
+	if (physical_memory == NULL) 
+            {   
+              printf("Error! Could not open file\n"); 
+              exit(-1); 
+            } 
+	fprintf(physical_memory, "       Address\t|     Frame\t|     Values\n");
 	for(int i = 512; i < arraySize; i++)
 	{
-		fprintf(physical_memory, "| 0x%x | %d | %c |\n",i,i/256,n[i]);
+		fprintf(physical_memory, "\t0x%x\t|\t%d\t|\t%c\n",i,i/256,physicalMemory[i]);
 	}
 	fclose(physical_memory);
 	
 	
-	//read from file
+	//read from file 
 	FILE * fPointer;   
 	fPointer = fopen("data/physical_memory.txt","r");  
 	char singleLine[100];
@@ -57,27 +57,35 @@ int main(){
 	}
 	fclose(fPointer);
 	
-	printf("Random number generated is : %d\n", r);
+	printf("Random number of bytes generated is : %d\n", bytes);
 
 
 	//fill in page table data
-	int frames = ((r+(randomLocation-1))/256) - (randomLocation/256);
+	int frames = ((bytes+(randomLocation-1))/256) - (randomLocation/256);
 
 	for(int i = 0; i <= frames; ++i){
-		n[i] = i + (randomLocation/256);
+		physicalMemory[i] = i + (randomLocation/256);
 	}
 
 	
 	//write to page table
 	FILE *page_table = fopen("data/page_table.txt","w");
+	if (page_table == NULL) 
+            {   
+              printf("Error! Could not open file\n"); 
+              exit(-1); 
+            } 
+	
+	fprintf(page_table, "\tpage\t| page table entry\n");
 	for(int i = 0; i <= frames; i++)
 	{
-		if(n[i]<0)
+		//this solves the problem of printing the minus values to the file
+		if(physicalMemory[i]<0)
 		{
-			fprintf(page_table, "| 0x%x | %d |\n",i,256 + n[i]);
+			fprintf(page_table, "\t0x%x\t|\t%d\n",i,256 + physicalMemory[i]);
 		}
 		else{
-		fprintf(page_table, "| 0x%x | %d |\n",i,n[i]);
+		fprintf(page_table, "\t0x%x\t|\t%d\n",i,physicalMemory[i]);
 		}
 	}
 	fclose(page_table);
@@ -91,9 +99,10 @@ int main(){
 	
   	 printf("\nEnter virtual address : ");
 		 scanf("%x", &virtualAddress);
-
-	int pageNumber = virtualAddress/256;
-	int frameNumber = n[pageNumber];
+	
+	
+	int pageNumber = virtualAddress/256;	
+	int frameNumber = physicalMemory[pageNumber];
 	if (frameNumber<0)
  	{
 		frameNumber = 256 + frameNumber;
@@ -101,11 +110,11 @@ int main(){
 	int offset = virtualAddress - ((pageNumber*256)-1);
 	int physicalAddress = (frameNumber * 256) + offset;
 
-	printf("\nAddress : 0x%x",virtualAddress);
-	printf("\nPage no : %d",pageNumber);
-	printf("\nPage %d : frame %d", pageNumber, frameNumber);
-	printf("\nOffset : %d", offset);
-	printf("\nValue : %c",n[physicalAddress]);
+	printf("\nAddress: 0x%x",virtualAddress);
+	printf("\nPage no: %d",pageNumber);
+	printf("\nPage %d = frame %d", pageNumber, frameNumber);
+	printf("\nOffset: %d", offset);
+	printf("\nValue: %c",physicalMemory[physicalAddress]);
 		
 	}
 	while(virtualAddress > 0);
